@@ -1,0 +1,15 @@
+import turtle
+screen = turtle.getscreen()
+t = turtle.Turtle()
+t.ht()
+
+t.speed(1000)
+t.begin_fill()
+t.fd(10)
+t.rt(90)
+t.fd(10)
+t.rt(90)
+t.fd(10)
+t.rt(90)
+t.fd(10)
+t.end_fill()
