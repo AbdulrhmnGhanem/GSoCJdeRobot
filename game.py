@@ -1,7 +1,5 @@
 import numpy as np
 
-from graphics import grid_size
-
 
 def count_neighbors(world):
     neighbors = np.zeros(world.shape, dtype=int)
@@ -27,6 +25,9 @@ def generations(world):
         yield world
 
 
+def find_ones(world):
+    return np.dstack(np.where(world == 1))
+
+
 if __name__ == "__main__":
-    world = np.random.randint(0, 2, (grid_size, grid_size))
-    gen = generations(world)
+    pass
