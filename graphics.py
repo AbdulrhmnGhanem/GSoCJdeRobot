@@ -16,7 +16,7 @@ def closest_number(n, m):
     return n2
 
 
-def grid_size(screen: turtle._Screen, block_size: int):
+def get_grid_size(screen: turtle._Screen, block_size: int):
     min_dim = min(screen.window_width(), screen.window_height())
     return (closest_number(min_dim, block_size) // block_size) - 5
 
@@ -61,22 +61,23 @@ def live_cell(edge_size: int = 10):
     t.end_fill()
 
 
+# main
+screen = turtle.Screen()
+t = turtle.Turtle()
+t.speed('fastest')
+t.ht()
+
+LENGTH = 10  # each grid element will be LENGTH x LENGTH pixels
+grid_size = get_grid_size(screen, LENGTH)  # grid_size x grid_size grid
+
 if __name__ == '__main__':
-    screen = turtle.Screen()
-    t = turtle.Turtle()
-    t.speed('fastest')
-    t.ht()
-
-    LENGTH = 10  # each grid element will be LENGTH x LENGTH pixels
-    N = grid_size(screen, LENGTH)  # N by N grid
-
     # center the grid
     t.penup()
-    t.goto(-N * LENGTH/2, -N * LENGTH/2)
+    t.goto(-grid_size * LENGTH/2, -grid_size * LENGTH/2)
     t.pendown()
 
     # draw the grid
-    grid(t, N, LENGTH, screen)
+    grid(t, grid_size, LENGTH, screen)
 
     live_cell()
     screen.exitonclick()
