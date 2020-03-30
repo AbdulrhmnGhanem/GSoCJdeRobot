@@ -1,4 +1,9 @@
 import turtle
+from time import sleep
+
+import numpy as np
+
+import game
 
 
 def closest_number(n, m):
@@ -41,6 +46,7 @@ def grid(turtle: turtle.Turtle, n: int, length: int, screen: turtle._Screen):
     t.forward(n*length)
     t.left(180)
     screen.update()
+    return t.position()
 
 
 def change_pos(screen: turtle.TurtleScreen):
@@ -77,7 +83,37 @@ if __name__ == '__main__':
     t.pendown()
 
     # draw the grid
-    grid(t, grid_size, LENGTH, screen)
+    grid_origin = grid(t, grid_size, LENGTH, screen)
 
-    live_cell()
-    screen.exitonclick()
+    world = np.random.randint(0, 2, (grid_size, grid_size))
+    gens = game.generations(world)
+
+    # rendering
+    def pos_reltive_origin(cord, origin=grid_origin):
+        return origin[0] + cord[0], origin[1] - cord[1]
+
+    # game loop
+    while True:
+        t.reset()
+        g = next(gens)
+        ones = game.find_ones(g)
+        live_cells_indecies = np.fliplr((ones * LENGTH)[0])
+
+        live_cells_pos = np.apply_along_axis(pos_reltive_origin,
+                                             1, live_cells_indecies)
+
+        t.penup()
+        t.goto(-grid_size * LENGTH/2, -grid_size * LENGTH/2)
+        t.pendown()
+
+        grid(t, grid_size, LENGTH, screen)
+        for cell in live_cells_pos:
+            screen.tracer(0, 0)
+            t.penup()
+            t.goto(cell)
+            t.pendown()
+            t.seth(0)
+            live_cell()
+            screen.update()
+        sleep(0.1)
+    # screen.exitonclick()
