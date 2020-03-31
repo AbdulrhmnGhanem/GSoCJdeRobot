@@ -18,25 +18,35 @@ class Graphics:
         self.origin = self.draw_grid()
 
     @staticmethod
-    def closest_number(n: int, m: int):
-        q = n // m
-        n1 = m * q
+    def closest_number(num: int, divider: int):
+        """
+        Get the closets number divisible by a divider
+        """
+        q = num // divider
+        n1 = divider * q
 
-        if(n * m) > 0:
-            n2 = (m * (q + 1))
+        if(num * divider) > 0:
+            n2 = (divider * (q + 1))
         else:
-            n2 = (m * (q - 1))
+            n2 = (divider * (q - 1))
 
-        if abs(n - n1) < abs(n - n2):
+        if abs(num - n1) < abs(num - n2):
             return n1
 
         return n2
 
     def get_grid_size(self):
+        """
+        calculate the size of grid based on the screen DIMs
+        :return: dimensions of the gird
+        """
         min_dim = min(self.screen.window_width(), self.screen.window_height())
         return (self.closest_number(min_dim, self.block_size) // self.block_size) - 5
 
     def draw_grid(self):
+        """
+        :return: the grid origin
+        """
         self.screen.tracer(0, 0)
         self.turtle.penup()
         self.turtle.goto(-self.grid_size * self.block_size / 2, -self.grid_size * self.block_size / 2)
@@ -63,6 +73,10 @@ class Graphics:
         return self.turtle.position()
 
     def render_cells(self, cells):
+        """
+        render the live cells for a world
+        :param cells: indices for live cells
+        """
         self.screen.tracer(0, 0)
         for cell in cells:
             self.turtle.penup()
@@ -74,6 +88,11 @@ class Graphics:
         sleep(0.1)
 
     def live_cell(self, edge_size: int = 10):
+        """
+        draw a live cell
+        :param edge_size: cell edge size
+        :return:
+        """
         self.turtle.begin_fill()
         for i in range(7):
             self.turtle.fd(edge_size) if i % 2 == 0 else self.turtle.rt(90)
