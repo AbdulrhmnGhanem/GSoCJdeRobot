@@ -29,5 +29,9 @@ def find_ones(world):
     return np.dstack(np.where(world == 1))
 
 
+def pos_relative_origin(origin, cord):
+    return origin[0] + cord[0], origin[1] - cord[1]
+
+
 if __name__ == "__main__":
     pass

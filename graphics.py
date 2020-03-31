@@ -1,119 +1,80 @@
 import turtle
 from time import sleep
 
-import numpy as np
 
-import game
+class Graphics:
+    def __init__(self, block_size: int, grid_size: int = None):
+        self.screen = turtle.Screen()
+        self.turtle = turtle.Turtle()
+        self.turtle.speed('fastest')
+        self.turtle.ht()
 
+        self.block_size = block_size
+        if grid_size:
+            self.grid_size = grid_size
+        else:
+            self.grid_size = self.get_grid_size()
 
-def closest_number(n, m):
-    q = n // m
-    n1 = m * q
+        self.origin = self.draw_grid()
 
-    if((n * m) > 0):
-        n2 = (m * (q + 1))
-    else:
-        n2 = (m * (q - 1))
+    @staticmethod
+    def closest_number(n: int, m: int):
+        q = n // m
+        n1 = m * q
 
-    if (abs(n - n1) < abs(n - n2)):
-        return n1
+        if(n * m) > 0:
+            n2 = (m * (q + 1))
+        else:
+            n2 = (m * (q - 1))
 
-    return n2
+        if abs(n - n1) < abs(n - n2):
+            return n1
 
+        return n2
 
-def get_grid_size(screen: turtle._Screen, block_size: int):
-    min_dim = min(screen.window_width(), screen.window_height())
-    return (closest_number(min_dim, block_size) // block_size) - 5
+    def get_grid_size(self):
+        min_dim = min(self.screen.window_width(), self.screen.window_height())
+        return (self.closest_number(min_dim, self.block_size) // self.block_size) - 5
 
+    def draw_grid(self):
+        self.screen.tracer(0, 0)
+        self.turtle.penup()
+        self.turtle.goto(-self.grid_size * self.block_size / 2, -self.grid_size * self.block_size / 2)
+        self.turtle.pendown()
+        sign = 1
+        for _ in range(2):
 
-def grid(turtle: turtle.Turtle, n: int, length: int, screen: turtle._Screen):
-    screen.tracer(0, 0)
-    sign = 1
-    for _ in range(2):
+            for _ in range(self.grid_size):
+                self.turtle.forward(self.block_size * self.grid_size)
+                self.turtle.left(sign * 90)
+                self.turtle.forward(self.block_size)
+                self.turtle.left(sign * 90)
+                sign = 0 - sign
 
-        for _ in range(n):
-            turtle.forward(length * n)
-            turtle.left(sign * 90)
-            turtle.forward(length)
-            turtle.left(sign * 90)
+            self.turtle.forward(self.block_size * self.grid_size)
+            [self.turtle.right, self.turtle.left][self.grid_size % 2](90)
             sign = 0 - sign
 
-        turtle.forward(length * n)
-        [turtle.right, turtle.left][n % 2](90)
-        sign = 0 - sign
+        # go to the upper left corner
+        self.turtle.forward(self.grid_size*self.block_size)
+        self.turtle.left(180)
+        self.screen.update()
 
-    # go to the upper left corner
-    t.forward(n*length)
-    t.left(180)
-    screen.update()
-    return t.position()
+        return self.turtle.position()
 
-
-def change_pos(screen: turtle.TurtleScreen):
-    x, y = screen.window_width(), screen.window_height()
-    t.penup()
-    t.setpos(-x/2, y/2)
-    t.pendown()
-
-
-def dead_cell(edge_size: int = 10):
-    for i in range(7):
-        t.fd(edge_size) if i % 2 == 0 else t.rt(90)
-
-
-def live_cell(edge_size: int = 10):
-    t.begin_fill()
-    dead_cell(edge_size)
-    t.end_fill()
-
-
-# main
-screen = turtle.Screen()
-t = turtle.Turtle()
-t.speed('fastest')
-t.ht()
-
-LENGTH = 10  # each grid element will be LENGTH x LENGTH pixels
-grid_size = get_grid_size(screen, LENGTH)  # grid_size x grid_size grid
-
-if __name__ == '__main__':
-    # center the grid
-    t.penup()
-    t.goto(-grid_size * LENGTH/2, -grid_size * LENGTH/2)
-    t.pendown()
-
-    # draw the grid
-    grid_origin = grid(t, grid_size, LENGTH, screen)
-
-    world = np.random.randint(0, 2, (grid_size, grid_size))
-    gens = game.generations(world)
-
-    # rendering
-    def pos_reltive_origin(cord, origin=grid_origin):
-        return origin[0] + cord[0], origin[1] - cord[1]
-
-    # game loop
-    while True:
-        t.reset()
-        g = next(gens)
-        ones = game.find_ones(g)
-        live_cells_indecies = np.fliplr((ones * LENGTH)[0])
-
-        live_cells_pos = np.apply_along_axis(pos_reltive_origin,
-                                             1, live_cells_indecies)
-
-        t.penup()
-        t.goto(-grid_size * LENGTH/2, -grid_size * LENGTH/2)
-        t.pendown()
-
-        grid(t, grid_size, LENGTH, screen)
-        for cell in live_cells_pos:
-            screen.tracer(0, 0)
-            t.penup()
-            t.goto(cell)
-            t.pendown()
-            t.seth(0)
-            live_cell()
-            screen.update()
+    def render_cells(self, cells):
+        self.screen.tracer(0, 0)
+        for cell in cells:
+            self.turtle.penup()
+            self.turtle.goto(cell)
+            self.turtle.pendown()
+            self.turtle.seth(0)
+            self.live_cell()
+        self.screen.update()
         sleep(0.1)
-    # screen.exitonclick()
+
+    def live_cell(self, edge_size: int = 10):
+        self.turtle.begin_fill()
+        for i in range(7):
+            self.turtle.fd(edge_size) if i % 2 == 0 else self.turtle.rt(90)
+        self.turtle.end_fill()
