@@ -1,9 +1,11 @@
 import turtle
 from time import sleep
 
+from configuration import grid_size, block_size
+
 
 class Graphics:
-    def __init__(self, block_size: int, grid_size: int = None):
+    def __init__(self):
         self.screen = turtle.Screen()
         self.turtle = turtle.Turtle()
         self.turtle.speed('fastest')

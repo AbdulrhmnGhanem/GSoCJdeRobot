@@ -6,7 +6,7 @@ import graphics
 import rules
 
 
-g = graphics.Graphics(10)
+g = graphics.Graphics()
 pos_relative_origin = partial(rules.pos_relative_origin, g.origin)
 
 world = np.random.randint(0, 2, (g.grid_size, g.grid_size))
